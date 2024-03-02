@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ListenableProvider(
-      create: (context) => Groce(),
-    child: MaterialApp(
+    return MaterialApp(
         title: 'Flutter Groceries',
         theme: ThemeData.dark().copyWith(
           useMaterial3: true,
@@ -28,9 +26,7 @@ class MyApp extends StatelessWidget {
           ),
           scaffoldBackgroundColor: const Color.fromARGB(255, 50, 58, 60),
         ),
-        home: HomePage() ),
-
-    );
+        home: HomePage(),);
 
 
   }

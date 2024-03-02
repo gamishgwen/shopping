@@ -1,49 +1,72 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shopping/dummy_items.dart';
+import 'package:shopping/grocery_source.dart';
 import 'package:shopping/new_item_Page.dart';
-
-import 'dummy_items.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(actions: [IconButton(onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return NewItem();
-        },));
-      }, icon: Icon(Icons.add))],
-        centerTitle: false,
-        title: Text('My Groceries'),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) {
+                    return NewItem();
+                  },
+                ));
+              },
+              icon: Icon(Icons.add))
+        ],
+        title: Text('My Grocery Items'),
       ),
-      body: ListenableBuilder(
-        listenable: context.read<Groce>(),
-        builder: (context, child) => Column(
-          children: [
-            for (GroceryItem groceryItem in context.read<Groce>().groceryItems)
-              Row(
-                children: [
-                  SizedBox(
-                      child: ColoredBox(color: groceryItem.category.color),
-                      height: 16,
-                      width: 16),
-                  SizedBox(width: 17),
-                  Text(
-                    groceryItem.name,
-                    style: TextStyle(fontSize: 19),
-                  ),
-                  SizedBox(width: 17),
-                  Text(
-                    groceryItem.quantity.toString(),
-                    style: TextStyle(fontSize: 19),
+      body: FutureBuilder(
+        future: GrocerySource().getAllGroceries(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            return Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                for (GroceryItem groceryitem in snapshot.data!)
+                  Dismissible(
+                    onDismissed: (direction) {
+                      GrocerySource().remove(groceryitem.id);
+                    },
+                    key: ObjectKey(groceryitem),
+                    child: Card(
+                      child: Row(
+                        children: [
+                          Container(
+                              width: 12,
+                              height: 12,
+                              color: groceryitem.category.color),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(groceryitem.category.name),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(groceryitem.quantity.toString())
+                        ],
+                      ),
+                    ),
                   )
-                ],
-              )
-          ],
-        ),
+              ],
+            );
+          }
+          return SizedBox();
+        },
       ),
     );
   }

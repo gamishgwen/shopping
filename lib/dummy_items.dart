@@ -1,40 +1,26 @@
-// import 'package:shopping_list/models/grocery_item.dart';
-// import 'package:shopping_list/data/categories.dart';
-
-import 'package:flutter/material.dart';
-
 import 'categories.dart';
 
-class Groce with ChangeNotifier {
-  final groceryItems = [
-    GroceryItem(
-        id: 'a',
-        name: 'Milk',
-        quantity: 1,
-        category: categories[Categories.dairy]!),
-    GroceryItem(
-        id: 'b',
-        name: 'Bananas',
-        quantity: 5,
-        category: categories[Categories.fruit]!),
-    GroceryItem(
-        id: 'c',
-        name: 'Beef Steak',
-        quantity: 1,
-        category: categories[Categories.meat]!),
-  ];
+class GroceryItem {
+  final String id;
+  String name;
+  int quantity;
+  final Category category;
+  GroceryItem(
+      {required this.id,
+      required this.name,
+      required this.quantity,
+      required this.category});
 
-  void addNewGrocery(GroceryItem newGrocery){
-    groceryItems.add(newGrocery);
-    notifyListeners();
+  factory GroceryItem.fromJson(String id, Map<String, dynamic> map) {
+    Category category= categories.values.firstWhere((element) => element.name==map['category']);
+    return GroceryItem(id: id, name: map['name'], quantity: map['quantity'], category: category);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'quantity': quantity,
+      'category': category.name
+    };
   }
 }
-
-class GroceryItem{
-  final String id;
-  final String name;
-  final int quantity;
-  final Category category;
-  const GroceryItem({required this.id, required this.name, required this.quantity, required this.category});
-}
-
